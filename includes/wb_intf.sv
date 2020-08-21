@@ -1,7 +1,7 @@
 /* verilator lint_off DECLFILENAME */
 `ifndef WB_BUS_SV
 `define WB_BUS_SV
-interface wb_bus_t #(parameter TAGSIZE=2);
+interface wb_bus_t #(parameter TAGSIZE=1);
     logic [31:0]        wb_dat_sm;  // data in
     logic [TAGSIZE-1:0] wb_tgd_sm;  // data in tag 
     logic [31:0]        wb_dat_ms;  // data out
