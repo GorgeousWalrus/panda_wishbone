@@ -1,4 +1,5 @@
 /* verilator lint_off DECLFILENAME */
+/* verilator lint_off MODDUP */
 `ifndef WB_BUS_SV
 `define WB_BUS_SV
 interface wb_bus_t #(parameter TAGSIZE=2);
