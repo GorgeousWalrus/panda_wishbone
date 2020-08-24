@@ -69,6 +69,11 @@ assign wb_bus.wb_rty = wb_rty_o;
 always_comb
 begin
     wb_ack_o = 1'b0;
+    addr_o   = 'b0;
+    data_o   = 'b0;
+    wb_dat_o = 'b0;
+    we_o     = 'b0;
+    sel_o    = 'b0;
     // Answer to requests, but only if slave is ready
     if(valid_i && (wb_cyc_i && wb_stb_i)) begin
         wb_ack_o = 1'b1;

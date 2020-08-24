@@ -158,7 +158,7 @@ begin
     end
 
     // Give the bus to the highest priority (LSB) master
-    for(int i = N_MASTER; i >= 0; i = i - 1) begin
+    for(int i = N_MASTER-1; i >= 0; i = i - 1) begin
         if(ms_cyc_i[i] && !locked_q) begin
             master_arbiter_n = 'b0 | (1 << i);
             locked_n         = mi_lock_i[i]; // lock the bus if requested
