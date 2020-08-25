@@ -150,6 +150,7 @@ logic                locked_q;
 always_comb
 begin
     master_arbiter_n = master_arbiter_q;
+    locked_n         = locked_q;
 
     // Free the bus if not used
     if((master_arbiter_q & ms_cyc_i) == 'b0) begin
@@ -242,6 +243,7 @@ begin
     if(rst_i) begin
         
     end else begin
+        locked_q         <= locked_n;
         master_arbiter_q <= master_arbiter_n;
     end
 end
