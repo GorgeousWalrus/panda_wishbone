@@ -24,12 +24,9 @@
 //        Multi master, multi slave, simultaneous write         SUCCESS
 //        Multi master, multi slave, simultaneous read+write    SUCCESS
 //
-// TODO: A master that has the bus, cannot be interrupted - if the same
-//       master has another request in the next cycle, but a higher prio
-//       master also has a request in that cycle, the low prio master
-//       is not interrupted. 
-//       Interrupting should be allowed, only if the bus is locked (mi_lock_i)
-//       it should remain with the current master.
+// TODO: If a slave takes more than one cycle to assert ack and the master
+//       changes meanwhile but the new master talks to the same slave, it
+//       can happen that the new master gets the ack&data of the old interaction
 //
 // ------------------------------------------------------------
 

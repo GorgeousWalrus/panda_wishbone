@@ -2,6 +2,7 @@
 /* verilator lint_off MODDUP */
 `ifndef WB_BUS_SV
 `define WB_BUS_SV
+
 interface wb_bus_t #(parameter TAGSIZE=2);
     logic [31:0]        wb_dat_sm;  // data in
     logic [TAGSIZE-1:0] wb_tgd_sm;  // data in tag 
@@ -29,6 +30,7 @@ interface wb_bus_t #(parameter TAGSIZE=2);
         input wb_dat_ms, wb_tgd_ms, wb_adr, wb_tga, wb_cyc, wb_tgc, wb_lock, wb_sel, wb_stb, wb_we,
         output wb_dat_sm, wb_tgd_sm, wb_ack, wb_err, wb_rty, wb_gnt
     );
-endinterface //wb_master_bus
+endinterface //wb_bus_t
+
 `endif
 /* verilator lint_on DECLFILENAME */
