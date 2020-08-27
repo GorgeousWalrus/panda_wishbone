@@ -84,7 +84,6 @@ logic [3:0]                      ms_sel_o; // select where the data on the data 
 logic [N_SLAVE-1:0]              ms_stb_o; // strobe out, valid data transmission
 logic                            ms_we_o;  // write enable
 
-logic [$clog2(N_SLAVE)-1:0]      slave_select;
 
 genvar ii;
 
@@ -131,9 +130,9 @@ for(ii = 0; ii < N_SLAVE; ii = ii + 1) begin
 end
 
 
+logic [$clog2(N_SLAVE)-1:0]      slave_select;
 logic [N_MASTER-1:0] master_arbiter_n;
 logic [N_MASTER-1:0] master_arbiter_q;
-logic [N_SLAVE-1:0]  slave_arbiter;
 logic [31:0]         ms_adr;
 logic                ms_cyc;
 logic                ms_stb;
@@ -142,7 +141,6 @@ logic                locked_n;
 logic                locked_q;
 
 assert property (@(posedge clk_i) $onehot0(master_arbiter_q));
-assert property (@(posedge clk_i) $onehot0(slave_arbiter));
 
 // Master arbiter select block
 // sets master_arbiter to one-hot or 0
