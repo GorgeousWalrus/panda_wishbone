@@ -133,16 +133,16 @@ int test_wishbone(){
             return i+2;
     }
     // Write request on both masters at the same time, read crossed
-    if(simultaneous_write(0, 1, 0x8, 0xc, 0xababcdcd, 0xdedefafa) != 0)
+    if(simultaneous_write(0, 1, 0x00000008, 0x1000000c, 0xababcdcd, 0xdedefafa) != 0)
         return 1<<6;
     tb->tick();
 
     // Read request on both masters at the same time
-    if(simultaneous_read(1, 0, 0x8, 0xc) != (uint128_t) 0xababcdcddedefafa)
+    if(simultaneous_read(1, 0, 0x00000008, 0x1000000c) != (uint128_t) 0xababcdcddedefafa)
         return 1<<7;
 
     tb->tick();
-    if(simultaneous_read_write(0, 1, 0x10, 0x10, 0x0000ffff) != 0x0000ffff)
+    if(simultaneous_read_write(0, 1, 0x10000000, 0x10000000, 0x0000ffff) != 0x0000ffff)
         return 1000;
 
     tb->tick(); // TODO: This additional tick is currently required in order for the
@@ -150,7 +150,7 @@ int test_wishbone(){
             //       decide who to access next. Otherwise, in the next simultaneous
             //       request, the low prio master remains in ownership of the bus
             
-    if(simultaneous_read_write(1, 0, 0x10, 0x10, 0xffff0000) != 0x0000ffff)
+    if(simultaneous_read_write(1, 0, 0x10000000, 0x10000000, 0xffff0000) != 0x0000ffff)
         return 1001;
 
     int data[4] = {0x1, 0x2, 0x3, 0x4};

@@ -19,8 +19,8 @@
 
 module wishbone_tb
 (
-    input logic         clk,
-    input logic         rstn_i,
+    input logic              clk,
+    input logic              rstn_i,
     input logic [1:0][31:0]  mdata_i,
     output logic [1:0][31:0] mdata_o,
     input logic [1:0][31:0]  maddr_i,
@@ -63,8 +63,6 @@ wb_xbar #(
 ) wb_xbar_i (
     .clk_i      ( clk ),
     .rst_i      ( ~rstn_i ),
-    .SSTART_ADDR({32'h10, 32'h0}),
-    .SEND_ADDR  ({32'h1f, 32'hf}),
     .wb_slave_port(wb_master),
     .wb_master_port(wb_slave)
 );
