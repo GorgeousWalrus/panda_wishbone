@@ -35,16 +35,14 @@
 module wb_xbar
 #(
     parameter TAGSIZE = 2,
+    parameter WB_ADDR_W = 32,
+    parameter WB_SLV_SEL_W = 4,
     parameter N_SLAVE,
     parameter N_MASTER
 )(
 /* verilator lint_off UNDRIVEN */
     input logic                     clk_i,
     input logic                     rst_i,       // Active high (as per spec)
-    
-    // Slave addresses
-    input logic [N_SLAVE-1:0][31:0] SSTART_ADDR, // Slave start addresses
-    input logic [N_SLAVE-1:0][31:0] SEND_ADDR,   // Slave end addresses
     
     // MASTERS
     wb_bus_t.slave                   wb_slave_port[N_MASTER],
@@ -85,6 +83,8 @@ logic [TAGSIZE-1:0]              ms_tgc_o; // cyc tag
 logic [3:0]                      ms_sel_o; // select where the data on the data bus (8-bit granularity assumed)
 logic [N_SLAVE-1:0]              ms_stb_o; // strobe out, valid data transmission
 logic                            ms_we_o;  // write enable
+
+logic [$clog2(N_SLAVE)-1:0]      slave_select;
 
 genvar ii;
 
@@ -197,44 +197,28 @@ begin
     end
 end
 
-// Slave arbiter select block
-// sets master_arbiter to one-hot or 0
-// TODO: Error if no slave is found
-always_comb
-begin
-    ms_adr_o = 'b0;
-    slave_arbiter = 'b0;
-    for(int i = 0; i < N_SLAVE; i = i + 1) begin
-        if((ms_adr >= SSTART_ADDR[i]) && (ms_adr < SEND_ADDR[i])) begin
-            slave_arbiter = 'b0 | (1 << i);
-            // Address out is set off by startaddress of the selected slave
-            ms_adr_o = ms_adr - SSTART_ADDR[i];
-        end
-    end
-end
+// slave select
+/* verilator lint_off WIDTH */
+assign slave_select = ms_adr[WB_ADDR_W-1: WB_ADDR_W - WB_SLV_SEL_W];
+/* verilator lint_on WIDTH */
 
 // Slave arbiter
 always_comb
 begin
-    sm_ack_o = 'b0;
-    sm_dat_o = 'b0;
-    sm_tgd_o = 'b0;
-    sm_err_o = 'b0;
-    sm_rty_o = 'b0;
     ms_cyc_o = 'b0;
     ms_stb_o = 'b0;
-    for(int i = 0; i < N_SLAVE; i = i + 1) begin
-        if(slave_arbiter == (1 << i)) begin
-            // mux the correct slave to master
-            sm_ack_o = sm_ack_i[i];
-            sm_dat_o = sm_dat_i[i];
-            sm_tgd_o = sm_tgd_i[i];
-            sm_err_o = sm_err_i[i];
-            sm_rty_o = sm_rty_i[i];
-            ms_cyc_o[i] = ms_cyc;
-            ms_stb_o[i] = ms_stb;
-        end
-    end
+    ms_adr_o = 'b0;
+
+    ms_adr_o[WB_ADDR_W-WB_SLV_SEL_W-1:0] = ms_adr[WB_ADDR_W-WB_SLV_SEL_W-1:0];
+    
+    ms_cyc_o[slave_select] = ms_cyc;
+    ms_stb_o[slave_select] = ms_stb;
+
+    sm_ack_o = sm_ack_i[slave_select];
+    sm_dat_o = sm_dat_i[slave_select];
+    sm_tgd_o = sm_tgd_i[slave_select];
+    sm_err_o = sm_err_i[slave_select];
+    sm_rty_o = sm_rty_i[slave_select];
 end
 
 always_ff @(posedge clk_i, posedge rst_i)
