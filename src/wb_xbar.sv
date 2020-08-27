@@ -134,7 +134,6 @@ for(ii = 0; ii < N_SLAVE; ii = ii + 1) begin
 end
 
 
-
 logic [N_MASTER-1:0] master_arbiter_n;
 logic [N_MASTER-1:0] master_arbiter_q;
 logic [N_SLAVE-1:0]  slave_arbiter;
@@ -144,6 +143,9 @@ logic                ms_stb;
 
 logic                locked_n;
 logic                locked_q;
+
+assert property (@(posedge clk_i) $onehot0(master_arbiter_q));
+assert property (@(posedge clk_i) $onehot0(slave_arbiter));
 
 // Master arbiter select block
 // sets master_arbiter to one-hot or 0
